@@ -4,7 +4,6 @@ import numpy as np
 from tensorflow.keras.models import load_model  # type: ignore
 from tensorflow.keras.utils import load_img, img_to_array  # type: ignore
 from PIL import Image
-import io
 
 # Load your pre-trained model
 model = load_model('CNN_plantdiseases_model.keras')
@@ -40,23 +39,51 @@ def predict_image(img):
     confidence = np.max(prediction) * 100  # Confidence percentage
     return predicted_class, confidence
 
-# Main Page with Custom Colors
-st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🌱 Plant Disease Detection System for Sustainable Agriculture</h1>", 
-            unsafe_allow_html=True)
+# Set page config
+st.set_page_config(
+    page_title="Plant Disease Detection",  # Title for the browser tab
+    page_icon="icons8-trees-64.png",  # Path to your favicon image
+)
+
+# Hide Header Pin Icon
+st.markdown("""
+    <style>
+        [data-testid="stHeaderActionElements"] {
+            display: none !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Add title and image
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🌱 Plant Disease Detection System for Sustainable Agriculture</h1>", unsafe_allow_html=True)
 
 image_path = "Diseases.jpg"  # Replace with your image file path or URL
 img = Image.open(image_path)
 st.image(img, use_container_width=True)
 
-# Using st.markdown for header with colors
-st.markdown("<h2 style='text-align: center; color: #FF6347;'>Upload a Leaf image for Disease Recognition</h2>", 
-            unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
+st.markdown(
+    "<p style='text-align: center; font-size: 20px;'>This system provides the capability to identify whether a plant is healthy or afflicted with disease. It supports detection for various plant species including Apple, Bell Pepper, Blueberry, Cherry, Corn, Grape, Orange, Peach, Potato, Raspberry, Soybean, Squash, Strawberry, and Tomato.</p>",
+    unsafe_allow_html=True
+)
 
 # Create a placeholder for dynamic elements
 placeholder = st.empty()
 
+st.markdown(
+    "<h2 style='text-align: center; color: #FF6347;'>Upload a Leaf image for Disease Recognition</h2>",
+    unsafe_allow_html=True
+)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
 # Add a unique key to the file uploader to reset it
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], key="image_uploader")
+st.markdown(
+    "<h3 style='font-size: 24px; text-align: center;'>Choose an Image</h3>", 
+    unsafe_allow_html=True
+)
+uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], key="image_uploader")
 
 if uploaded_file is not None:
     # Create a layout with three columns
@@ -68,33 +95,15 @@ if uploaded_file is not None:
         st.image(img, caption="Uploaded Image", use_container_width=False, width=400)  # Adjust the width here
 
         # Predict Button (centered horizontally in column2)
-        predict_button = st.button("Predict")
         
-    # Add Snowy Effect with custom CSS
-    snowy_css = """
-    <style>
-    @keyframes snow {
-      0% { top: -10px; }
-      100% { top: 100%; }
-    }
-    .snow {
-      position: absolute;
-      top: -10px;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9999;
-    }
-    </style>
-"""
-    st.markdown(snowy_css, unsafe_allow_html=True)
+        predict_button = st.button("Predict")
 
     if predict_button:
         with st.spinner("Analyzing the image..."):
+            st.snow()
             predicted_class, confidence = predict_image(uploaded_file)
             # Display prediction and confidence below the image preview with custom colors
+            st.success("Model is predicting it as a {}".format(predicted_class))
             st.markdown(f"<h3 style='color: #4CAF50;'>Prediction: {predicted_class}</h3>", unsafe_allow_html=True)
             st.markdown(f"<h4 style='color: #FFD700; font-size: 18px;'><b>Confidence:</b> {confidence:.2f}%</h4>", 
                         unsafe_allow_html=True)
-            st.snow()
