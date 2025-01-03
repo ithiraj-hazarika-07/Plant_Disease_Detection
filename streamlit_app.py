@@ -99,6 +99,6 @@ if uploaded_file is not None:
             predicted_class, confidence = predict_image(uploaded_file)
         
             st.success("Model is predicting it as a {}".format(predicted_class))
-            st.markdown(f"<h3 style='color: #4CAF50;'>Prediction: {predicted_class}</h3>", unsafe_allow_html=True)
-            st.markdown(f"<h4 style='color: #FFD700; font-size: 18px;'><b>Confidence:</b> {confidence:.2f}%</h4>", 
+            st.markdown(f"<h3 style='color: #4CAF50;'><b>Prediction: {predicted_class}</b></h3>", unsafe_allow_html=True)
+            st.markdown(f"<h4 style='color: teal; font-size: 22px;'><b>Confidence:</b> {confidence:.2f}%</h4>", 
                         unsafe_allow_html=True)
