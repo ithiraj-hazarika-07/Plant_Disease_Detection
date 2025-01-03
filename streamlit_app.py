@@ -4,10 +4,8 @@ from tensorflow.keras.models import load_model  # type: ignore
 from tensorflow.keras.utils import load_img, img_to_array  # type: ignore
 from PIL import Image
 
-# Load your pre-trained model
 model = load_model('CNN_plantdiseases_model.keras')
 
-# Define class labels
 class_labels = [
     "Apple Scab Leaf", "Apple Black Rot Leaf", "Apple Cedar Apple Rust Leaf", "Apple Healthy Leaf",
     "Blueberry Healthy Leaf", "Cherry Powdery Mildew Leaf", "Cherry Healthy Leaf",
@@ -22,11 +20,11 @@ class_labels = [
     "Tomato Yellow Leaf Curl Virus Leaf", "Tomato Mosaic Virus Leaf", "Tomato Healthy Leaf"
 ]
 
-# Preprocess the uploaded image
+# Preprocessing the uploaded image
 def preprocess_image(image):
-    img = load_img(image, target_size=(224, 224))  # Load and resize the image
-    img = img_to_array(img) / 255.0  # Convert to array and normalize
-    img = np.expand_dims(img, axis=0)  # Add batch dimension
+    img = load_img(image, target_size=(224, 224))
+    img = img_to_array(img) / 255.0
+    img = np.expand_dims(img, axis=0)
     return img
 
 # Function for prediction with confidence
@@ -35,16 +33,14 @@ def predict_image(img):
     prediction = model.predict(img)
     predicted_class_idx = np.argmax(prediction, axis=1)[0]
     predicted_class = class_labels[predicted_class_idx]
-    confidence = np.max(prediction) * 100  # Confidence percentage
+    confidence = np.max(prediction) * 100
     return predicted_class, confidence
 
-# Set page config
 st.set_page_config(
-    page_title="Plant Disease Detection",  # Title for the browser tab
-    page_icon="icons8-trees-64.png",  # Path to your favicon image
+    page_title="Plant Disease Detection",
+    page_icon="icons8-trees-64.png",
 )
 
-# Hide Header Pin Icon
 st.markdown("""
     <style>
         [data-testid="stHeaderActionElements"] {
@@ -56,12 +52,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Add title and image
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>🌱 Plant Disease Detection System for Sustainable Agriculture</h1>", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-image_path = "Diseases.jpg"  # Replace with your image file path or URL
+image_path = "Diseases.jpg"
 img = Image.open(image_path)
 st.image(img, use_container_width=True)
 
@@ -72,7 +67,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Create a placeholder for dynamic elements
 placeholder = st.empty()
 
 st.markdown(
@@ -82,7 +76,6 @@ st.markdown(
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Add a unique key to the file uploader to reset it
 st.markdown(
     "<h3 style='font-size: 24px; text-align: center; font-weight: 900;'>Choose an Image</h3>", 
     unsafe_allow_html=True
@@ -90,15 +83,13 @@ st.markdown(
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], key="image_uploader")
 
 if uploaded_file is not None:
-    # Create a layout with three columns
-    col1, col2, col3 = st.columns([1, 2, 1])  # Adjusting column sizes
+
+    col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        # Display the uploaded image with a controlled width (adjust as needed)
+    
         img = Image.open(uploaded_file)
-        st.image(img, caption="Uploaded Image", use_container_width=False, width=400)  # Adjust the width here
-
-        # Predict Button (centered horizontally in column2)
+        st.image(img, caption="Uploaded Image", use_container_width=False, width=400)
         
         predict_button = st.button("Predict")
 
@@ -106,7 +97,7 @@ if uploaded_file is not None:
         st.snow()
         with st.spinner("Analyzing the image..."):
             predicted_class, confidence = predict_image(uploaded_file)
-            # Display prediction and confidence below the image preview with custom colors
+        
             st.success("Model is predicting it as a {}".format(predicted_class))
             st.markdown(f"<h3 style='color: #4CAF50;'>Prediction: {predicted_class}</h3>", unsafe_allow_html=True)
             st.markdown(f"<h4 style='color: #FFD700; font-size: 18px;'><b>Confidence:</b> {confidence:.2f}%</h4>", 
